@@ -9,6 +9,11 @@ import (
 	"github.com/the-robot-lives/terraform-provider-readthedocs/internal/provider"
 )
 
+var (
+	version = "dev"
+	commit  = "none"
+)
+
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
 func main() {

@@ -4,6 +4,9 @@ Public repo: [the-robot-lives/terraform-provider-readthedocs](https://github.com
 
 Terraform Registry address: `registry.terraform.io/the-robot-lives/readthedocs`
 
+Release checksums are GPG-signed. Public key: [`gpg-pubkey.asc`](gpg-pubkey.asc)  
+Fingerprint: `2EABB783A4251C2A26FCD82E4CACEE95EB6E16D0`
+
 From-scratch Terraform/OpenTofu provider for **Read the Docs API v3**.
 
 Not a fork of [`BarnabyShearer/readthedocs`](https://registry.terraform.io/providers/BarnabyShearer/readthedocs) (abandoned 2022, projects only) and not a fork of any MCP. Client and schema are written from the official docs:
