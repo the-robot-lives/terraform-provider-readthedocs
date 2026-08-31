@@ -1,7 +1,8 @@
 terraform {
   required_providers {
     readthedocs = {
-      source = "the-robot-lives/readthedocs"
+      source  = "the-robot-lives/readthedocs"
+      version = "0.1.0"
     }
   }
 }

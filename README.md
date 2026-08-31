@@ -2,9 +2,12 @@
 
 Public repo: [the-robot-lives/terraform-provider-readthedocs](https://github.com/the-robot-lives/terraform-provider-readthedocs)
 
-Terraform Registry address: `registry.terraform.io/the-robot-lives/readthedocs`
+Source address: `the-robot-lives/readthedocs`  
+(plugin protocol address: `registry.terraform.io/the-robot-lives/readthedocs`)
 
-Release checksums are GPG-signed. Public key: [`gpg-pubkey.asc`](gpg-pubkey.asc)  
+House install is a **local compile** into `~/.local/share/terraform/plugins` — the same path as SigNoz, `noizu/foryou`, and `noizu/google-marketing`. There is no HashiCorp Registry listing. GitHub `v*` releases exist for checksums if you ever want a registry later.
+
+GPG public key: [`gpg-pubkey.asc`](gpg-pubkey.asc)  
 Fingerprint: `2EABB783A4251C2A26FCD82E4CACEE95EB6E16D0`
 
 From-scratch Terraform/OpenTofu provider for **Read the Docs API v3**.
@@ -47,21 +50,33 @@ List data sources expose `count` + `results_json` (raw API array).
 
 Custom domains, incoming VCS webhooks, outgoing webhooks, documented project DELETE.
 
-## Local build
+## Local build (house path)
 
 ```bash
-cd contrib/terraform-provider-readthedocs
-go test ./...
-go build -o terraform-provider-readthedocs
+./scripts/build-provider.sh
 ```
 
-`~/.terraformrc`:
+Installs:
+
+```text
+~/.local/share/terraform/plugins/terraform-provider-readthedocs
+~/.local/share/terraform/plugins/registry.opentofu.org/the-robot-lives/readthedocs/0.1.0/<os>_<arch>/
+~/.local/share/terraform/plugins/registry.terraform.io/the-robot-lives/readthedocs/0.1.0/<os>_<arch>/
+```
+
+`~/.terraformrc` (`dev_overrides` skips `init` download; `filesystem_mirror` is the versioned path OpenTofu uses for `noizu/*`):
 
 ```hcl
 provider_installation {
   dev_overrides {
-    "the-robot-lives/readthedocs" = "/abs/path/to/contrib/terraform-provider-readthedocs"
+    "the-robot-lives/readthedocs" = "~/.local/share/terraform/plugins"
+  }
+  filesystem_mirror {
+    path    = "~/.local/share/terraform/plugins"
+    include = ["the-robot-lives/readthedocs"]
   }
   direct {}
 }
 ```
+
+Example: [`examples/github-utils/main.tf`](examples/github-utils/main.tf). Needs `READTHEDOCS_TOKEN` (or `token` in the provider block). Do not apply without a token.
