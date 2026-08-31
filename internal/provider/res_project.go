@@ -64,7 +64,8 @@ func (r *projectRes) Schema(_ context.Context, _ resource.SchemaRequest, resp *r
 			"language":        schema.StringAttribute{Optional: true, Computed: true},
 			"programming_language": schema.StringAttribute{Optional: true, Computed: true},
 			"default_version": schema.StringAttribute{Optional: true, Computed: true},
-			"default_branch":  schema.StringAttribute{Optional: true, Computed: true},
+			"default_branch": schema.StringAttribute{Optional: true, Computed: true,
+				MarkdownDescription: "VCS default branch. RTD often returns `master` until versions are synced; the provider keeps the configured value after create/update so Terraform stays consistent, then PATCHes."},
 			"privacy_level":   schema.StringAttribute{Optional: true, Computed: true, MarkdownDescription: "Business only: public|private"},
 			"external_builds_privacy_level": schema.StringAttribute{Optional: true, Computed: true},
 			"external_builds_enabled":       schema.BoolAttribute{Optional: true, Computed: true},
@@ -210,18 +211,72 @@ func (r *projectRes) hydrate(raw json.RawMessage, m *projectModel) {
 	}
 }
 
+func projectSlug(m projectModel) string {
+	if s := optString(m.Slug); s != "" {
+		return s
+	}
+	return optString(m.Name)
+}
+
+// keepConfigured copies known planned values over API hydrate.
+// RTD create often ignores default_branch (returns master) until sync-versions.
+func keepConfigured(dst, src *projectModel) {
+	keepStr := func(d, s *types.String) {
+		if !s.IsNull() && !s.IsUnknown() {
+			*d = *s
+		}
+	}
+	keepStr(&dst.Name, &src.Name)
+	keepStr(&dst.RepositoryURL, &src.RepositoryURL)
+	keepStr(&dst.RepositoryType, &src.RepositoryType)
+	keepStr(&dst.Homepage, &src.Homepage)
+	keepStr(&dst.Language, &src.Language)
+	keepStr(&dst.ProgrammingLanguage, &src.ProgrammingLanguage)
+	keepStr(&dst.DefaultVersion, &src.DefaultVersion)
+	keepStr(&dst.DefaultBranch, &src.DefaultBranch)
+	keepStr(&dst.PrivacyLevel, &src.PrivacyLevel)
+	keepStr(&dst.ExternalBuildsPrivacyLevel, &src.ExternalBuildsPrivacyLevel)
+	keepStr(&dst.AnalyticsCode, &src.AnalyticsCode)
+	keepStr(&dst.VersioningScheme, &src.VersioningScheme)
+	keepStr(&dst.ReadthedocsYAMLPath, &src.ReadthedocsYAMLPath)
+	if !src.Tags.IsNull() && !src.Tags.IsUnknown() {
+		dst.Tags = src.Tags
+	}
+	if !src.Teams.IsNull() && !src.Teams.IsUnknown() {
+		dst.Teams = src.Teams
+	}
+	if !src.ExternalBuildsEnabled.IsNull() && !src.ExternalBuildsEnabled.IsUnknown() {
+		dst.ExternalBuildsEnabled = src.ExternalBuildsEnabled
+	}
+	if !src.AnalyticsDisabled.IsNull() && !src.AnalyticsDisabled.IsUnknown() {
+		dst.AnalyticsDisabled = src.AnalyticsDisabled
+	}
+}
+
 func (r *projectRes) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan projectModel
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	planned := plan
 	raw, err := r.c.CreateProject(r.body(plan, true))
 	if err != nil {
-		resp.Diagnostics.AddError("create project", err.Error())
-		return
+		slug := projectSlug(plan)
+		existing, gerr := r.c.GetProject(slug, "")
+		if gerr != nil {
+			resp.Diagnostics.AddError("create project", err.Error())
+			return
+		}
+		raw = existing
+		if uerr := r.c.UpdateProject(slug, r.body(plan, false)); uerr == nil {
+			if refreshed, rerr := r.c.GetProject(slug, ""); rerr == nil {
+				raw = refreshed
+			}
+		}
 	}
 	r.hydrate(raw, &plan)
+	keepConfigured(&plan, &planned)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
@@ -246,6 +301,7 @@ func (r *projectRes) Update(ctx context.Context, req resource.UpdateRequest, res
 	if resp.Diagnostics.HasError() {
 		return
 	}
+	planned := plan
 	if err := r.c.UpdateProject(plan.Slug.ValueString(), r.body(plan, false)); err != nil {
 		resp.Diagnostics.AddError("update project", err.Error())
 		return
@@ -256,6 +312,7 @@ func (r *projectRes) Update(ctx context.Context, req resource.UpdateRequest, res
 		return
 	}
 	r.hydrate(raw, &plan)
+	keepConfigured(&plan, &planned)
 	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 

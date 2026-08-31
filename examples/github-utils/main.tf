@@ -16,7 +16,7 @@ resource "readthedocs_project" "github_utils" {
   homepage               = "https://github.com/the-robot-lives/github-tools"
   programming_language   = "py"
   language               = "en"
-  default_branch         = "mono-repo-dev"
+  default_branch         = "develop"
   readthedocs_yaml_path  = ".readthedocs.yaml"
   tags                   = ["git", "submodules", "sphinx"]
 }
@@ -32,7 +32,7 @@ resource "readthedocs_build" "latest" {
   project = readthedocs_project.github_utils.id
   version = "latest"
   triggers = {
-    git_sha = "replace-me-to-rebuild"
+    git_sha = "rebuild-after-develop-default"
   }
 }
 

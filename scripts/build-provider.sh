@@ -32,8 +32,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROVIDER_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 GO_BIN="$(command -v go || true)"
+if [[ -z "${GO_BIN}" ]] || ! "${GO_BIN}" env GOOS >/dev/null 2>&1; then
+  GO_BIN=""
+  for c in "${HOME}/.config/asdf/installs/golang/"*/go/bin/go; do
+    if [[ -x "${c}" ]]; then
+      GO_BIN="${c}"
+      break
+    fi
+  done
+fi
 if [[ -z "${GO_BIN}" ]]; then
-  echo "error: could not locate a 'go' binary." >&2
+  echo "error: could not locate a working 'go' binary." >&2
   exit 1
 fi
 
