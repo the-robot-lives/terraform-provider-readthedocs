@@ -44,7 +44,7 @@ provider "readthedocs" {
 
 `project`, `projects`, `version`, `versions`, `build`, `builds`, `redirects`, `environment_variables`, `subprojects`, `translations`, `organization`, `organizations`, `organization_projects`, `organization_teams`, `remote_organizations`, `remote_repositories`, `embed`, `superproject`.
 
-List data sources expose `count` + `results_json` (raw API array).
+List data sources expose `result_count` + `results_json` (raw API array).
 
 ## Not in public API v3 (cannot implement)
 

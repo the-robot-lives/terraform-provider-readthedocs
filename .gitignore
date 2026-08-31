@@ -2,6 +2,7 @@ terraform-provider-readthedocs
 terraform-provider-readthedocs.exe
 dist/
 .terraform/
+.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
 crash.log

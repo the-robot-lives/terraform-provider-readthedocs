@@ -42,4 +42,4 @@ data "readthedocs_builds" "recent" {
 
 output "docs_url" { value = readthedocs_project.github_utils.docs_url }
 output "build_id" { value = readthedocs_build.latest.id }
-output "recent_build_count" { value = data.readthedocs_builds.recent.count }
+output "recent_build_count" { value = data.readthedocs_builds.recent.result_count }

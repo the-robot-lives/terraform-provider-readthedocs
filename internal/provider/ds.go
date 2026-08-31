@@ -26,7 +26,7 @@ type listModel struct {
 	Org         types.String `tfsdk:"organization"`
 	FullName    types.String `tfsdk:"full_name"`
 	Doctool     types.String `tfsdk:"doctool"`
-	Count       types.Int64  `tfsdk:"count"`
+	Count       types.Int64  `tfsdk:"result_count"`
 	ResultsJSON types.String `tfsdk:"results_json"`
 	JSON        types.String `tfsdk:"json"`
 	Content     types.String `tfsdk:"content"`
@@ -36,7 +36,7 @@ type listModel struct {
 func listSchema(desc string, extra map[string]schema.Attribute) schema.Schema {
 	attrs := map[string]schema.Attribute{
 		"id":            schema.StringAttribute{Computed: true},
-		"count":         schema.Int64Attribute{Computed: true},
+		"result_count":  schema.Int64Attribute{Computed: true, MarkdownDescription: "API list length (not Terraform count)"},
 		"results_json":  schema.StringAttribute{Computed: true, MarkdownDescription: "JSON array of result objects"},
 		"json":          schema.StringAttribute{Computed: true},
 		"name":          schema.StringAttribute{Optional: true, Computed: true},
