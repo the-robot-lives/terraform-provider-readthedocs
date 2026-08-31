@@ -1,0 +1,11 @@
+terraform-provider-readthedocs
+terraform-provider-readthedocs.exe
+dist/
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+.idea/
+.vscode/
+*.swp
+.DS_Store
