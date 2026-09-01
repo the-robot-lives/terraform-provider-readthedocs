@@ -66,7 +66,7 @@ API: `POST/GET/PATCH /projects/` — **no official DELETE**, so destroy is a no-
 
 ### readthedocs_sharing (`res_more.go`, Business only)
 
-| id, project, access_type, description, expires, token, url, json | string | | `password` is sensitive |
+| id, project, access_type, description, expires, token, url, json | string | `password` (string) is optional + **sensitive in state** |
 | allow_all | bool | | |
 | versions | list(string) | | |
 

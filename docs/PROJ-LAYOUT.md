@@ -31,6 +31,7 @@ terraform-provider-readthedocs/
 ├── go.mod / go.sum                # Go module (terraform-plugin-framework deps)
 ├── Makefile                       # compile / test / install helpers
 ├── README.md                      # Start here: auth, resource/datasource tables, local install path
+├── CLAUDE.md                      # Claude Code guidance: commands + monorepo rules pointer
 ├── merge-notes.md                 # sep-1 branch-sweep notes (2026-09-01)
 ├── TODO.md                        # Remaining follow-ups
 ├── LICENSE                        # MIT

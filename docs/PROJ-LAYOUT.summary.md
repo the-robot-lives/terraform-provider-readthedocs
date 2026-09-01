@@ -14,6 +14,7 @@ terraform-provider-readthedocs/
 ├── terraform-registry-manifest.json
 ├── go.mod / go.sum
 ├── Makefile
+├── CLAUDE.md
 ├── README.md / merge-notes.md / TODO.md / LICENSE
 └── docs/                      # PROJ-LAYOUT.md, PROJ-SCHEMA.md, PROJ-ARCH.md
 ```

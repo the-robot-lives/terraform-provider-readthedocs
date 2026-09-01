@@ -42,6 +42,8 @@ graph LR
 | `internal/provider/helpers.go` | Shared JSON→state mapping helpers |
 | `internal/rtdapi/client.go` | From-scratch REST client: auth header, endpoint builders, RTD JSON shapes (+ unit tests) |
 
+→ *Components ↔ directories: see [PROJ-LAYOUT.md](PROJ-LAYOUT.md)*
+
 ## Data Flow
 
 `Configure` resolves token (provider block > `READTHEDOCS_TOKEN`) and base URL
