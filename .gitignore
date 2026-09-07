@@ -10,3 +10,6 @@ crash.log
 .vscode/
 *.swp
 .DS_Store
+
+# Canonical worktree placement
+.claude/worktrees/
