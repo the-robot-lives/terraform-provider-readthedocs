@@ -1,33 +1,14 @@
 # terraform-provider-readthedocs
 
-Public repo: [the-robot-lives/terraform-provider-readthedocs](https://github.com/the-robot-lives/terraform-provider-readthedocs)
+**Repo:** https://github.com/the-robot-lives/terraform-provider-readthedocs
 
-Source address: `the-robot-lives/readthedocs`  
-(plugin protocol address: `registry.terraform.io/the-robot-lives/readthedocs`)
+From-scratch Terraform/OpenTofu provider for the Read the Docs API v3.
 
-House install is a **local compile** into `~/.local/share/terraform/plugins` — the same path as SigNoz, `noizu/foryou`, and `noizu/google-marketing`. There is no HashiCorp Registry listing. GitHub `v*` releases exist for checksums if you ever want a registry later.
+## What
 
-GPG public key: [`gpg-pubkey.asc`](gpg-pubkey.asc)  
-Fingerprint: `2EABB783A4251C2A26FCD82E4CACEE95EB6E16D0`
+A Go provider (source address `the-robot-lives/readthedocs`, plugin protocol address `registry.terraform.io/the-robot-lives/readthedocs`) covering the full RTD API v3 surface. Not a fork of the abandoned 2022 `BarnabyShearer/readthedocs` provider or any MCP — client and schema are written from the official docs (https://docs.readthedocs.com/platform/stable/api/v3.html).
 
-From-scratch Terraform/OpenTofu provider for **Read the Docs API v3**.
-
-Not a fork of [`BarnabyShearer/readthedocs`](https://registry.terraform.io/providers/BarnabyShearer/readthedocs) (abandoned 2022, projects only) and not a fork of any MCP. Client and schema are written from the official docs:
-
-https://docs.readthedocs.com/platform/stable/api/v3.html
-
-## Auth
-
-```hcl
-provider "readthedocs" {
-  # token    = var.rtd_token   # or READTHEDOCS_TOKEN
-  # base_url = "https://app.readthedocs.com/api/v3"  # Business; default is .org
-}
-```
-
-`Authorization: Token …` — 60 req/min authenticated.
-
-## Resources (write)
+**Resources (write):**
 
 | Resource | API |
 |----------|-----|
@@ -40,31 +21,35 @@ provider "readthedocs" {
 | `readthedocs_subproject` | `POST/GET/DELETE /subprojects/` |
 | `readthedocs_sharing` | Business `GET/POST/PATCH/DELETE /sharing/` |
 
-## Data sources (read)
+**Data sources (read):** `project`, `projects`, `version`, `versions`, `build`, `builds`, `redirects`, `environment_variables`, `subprojects`, `translations`, `organization`, `organizations`, `organization_projects`, `organization_teams`, `remote_organizations`, `remote_repositories`, `embed`, `superproject`. List data sources expose `result_count` + `results_json` (raw API array).
 
-`project`, `projects`, `version`, `versions`, `build`, `builds`, `redirects`, `environment_variables`, `subprojects`, `translations`, `organization`, `organizations`, `organization_projects`, `organization_teams`, `remote_organizations`, `remote_repositories`, `embed`, `superproject`.
+Not implementable (not in public API v3): custom domains, incoming VCS webhooks, outgoing webhooks, documented project DELETE.
 
-List data sources expose `result_count` + `results_json` (raw API array).
+## Why
 
-## Not in public API v3 (cannot implement)
+Noizu hosts docs for many portfolio projects on Read the Docs; managing projects, versions, redirects, environment variables, and subprojects in Terraform keeps that configuration versioned and reproducible instead of click-ops. No maintained provider existed, so this one was written against the v3 API directly.
 
-Custom domains, incoming VCS webhooks, outgoing webhooks, documented project DELETE.
+## Getting Started
 
-## Local build (house path)
+Prerequisites: Go (for build), Terraform or OpenTofu, a Read the Docs API token.
+
+```hcl
+provider "readthedocs" {
+  # token    = var.rtd_token   # or READTHEDOCS_TOKEN env var
+  # base_url = "https://app.readthedocs.com/api/v3"  # Business; default is .org
+}
+```
+
+Auth uses `Authorization: Token …` — 60 req/min authenticated.
+
+**House install is a local compile** into `~/.local/share/terraform/plugins` (same path as SigNoz, `noizu/foryou`, `noizu/google-marketing`); there is no HashiCorp Registry listing. GitHub `v*` releases carry checksums if a registry listing is ever wanted.
 
 ```bash
-./scripts/build-provider.sh
+./scripts/build-provider.sh   # builds + installs to the local plugin dir (both registry.terraform.io and registry.opentofu.org layouts)
+make compile && make test     # build and test via Makefile
 ```
 
-Installs:
-
-```text
-~/.local/share/terraform/plugins/terraform-provider-readthedocs
-~/.local/share/terraform/plugins/registry.opentofu.org/the-robot-lives/readthedocs/0.1.0/<os>_<arch>/
-~/.local/share/terraform/plugins/registry.terraform.io/the-robot-lives/readthedocs/0.1.0/<os>_<arch>/
-```
-
-`~/.terraformrc` (`dev_overrides` skips `init` download; `filesystem_mirror` is the versioned path OpenTofu uses for `noizu/*`):
+`~/.terraformrc` wires it up — `dev_overrides` skips `init` download; `filesystem_mirror` is the versioned path OpenTofu uses for `noizu/*`:
 
 ```hcl
 provider_installation {
@@ -79,4 +64,16 @@ provider_installation {
 }
 ```
 
-Example: [`examples/github-utils/main.tf`](examples/github-utils/main.tf). Needs `READTHEDOCS_TOKEN` (or `token` in the provider block). Do not apply without a token.
+Example config: [`examples/github-utils/main.tf`](examples/github-utils/main.tf) — needs `READTHEDOCS_TOKEN` (or `token` in the provider block); do not apply without a token.
+
+## How It Works
+
+- `internal/rtdapi/` — hand-written Read the Docs API v3 client.
+- `internal/provider/` — Terraform plugin-framework resources and data sources.
+- GPG signing key for releases: [`gpg-pubkey.asc`](gpg-pubkey.asc), fingerprint `2EABB783A4251C2A26FCD82E4CACEE95EB6E16D0`; `terraform-registry-manifest.json` is kept ready for a future registry publish.
+
+## Docs
+
+`docs/` carries PROJ-ARCH / PROJ-LAYOUT / PROJ-SCHEMA digests and full docs.
+
+License: MPL-2.0 (see `LICENSE`).
