@@ -76,4 +76,4 @@ Example config: [`examples/github-utils/main.tf`](examples/github-utils/main.tf)
 
 `docs/` carries PROJ-ARCH / PROJ-LAYOUT / PROJ-SCHEMA digests and full docs.
 
-License: MPL-2.0 (see `LICENSE`).
+License: MIT (see `LICENSE`).
