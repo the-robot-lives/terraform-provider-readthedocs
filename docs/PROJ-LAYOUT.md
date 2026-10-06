@@ -1,7 +1,7 @@
 # Project Layout — terraform-provider-readthedocs
 
 From-scratch Terraform/OpenTofu provider for the **Read the Docs API v3** (`the-robot-lives/readthedocs`).
-Go + terraform-plugin-framework. ~2k LOC; single-level tree, no `layout/` extraction needed.
+Go + terraform-plugin-framework. ~2.2k LOC; single-level tree, no `layout/` extraction needed.
 
 ```text
 terraform-provider-readthedocs/
@@ -29,13 +29,16 @@ terraform-provider-readthedocs/
 ├── gpg-pubkey.asc                 # GPG public key for release signing (2EABB783…E16D0)
 ├── terraform-registry-manifest.json  # Registry metadata (only needed if ever published)
 ├── go.mod / go.sum                # Go module (terraform-plugin-framework deps)
+├── .tool-versions                 # Toolchain pin (golang 1.25.8) — asdf/mise
 ├── Makefile                       # compile / test / install helpers
 ├── README.md                      # Start here: auth, resource/datasource tables, local install path
 ├── CLAUDE.md                      # Claude Code guidance: commands + monorepo rules pointer
+├── AGENT.md / AGENTS.md           # Multi-agent build rules (kept aligned with CLAUDE.md)
+├── docs/                          # PROJ-LAYOUT/SCHEMA/ARCH/THREAT-MODEL + .summary twins
 ├── merge-notes.md                 # sep-1 branch-sweep notes (2026-09-01)
 ├── TODO.md                        # Remaining follow-ups
 ├── LICENSE                        # MIT
-└── .gitignore                     # Build outputs, .terraform, tfstate
+└── .gitignore                     # Build outputs, .terraform, tfstate, .claude/worktrees/
 ```
 
 ## Key Files Requiring Setup
@@ -48,5 +51,7 @@ terraform-provider-readthedocs/
 
 ## Notes
 
-- No `docs/` existed previously; this file created 2026-09-01.
+- Docs set created 2026-09-01; THREAT-MODEL added 2026-10-07.
 - `examples/github-utils/terraform.tfstate*` are local state artifacts — treat as transient, never commit values.
+- `Portfolio/Utilities/source/terraform-provider-readthedocs/` is an empty untracked scaffolding tree (leftover of monorepo placement) — ignore; do not commit.
+- `.claude/worktrees/` is gitignored canonical worktree placement (see repo CLAUDE.md).

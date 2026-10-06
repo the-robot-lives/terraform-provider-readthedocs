@@ -13,8 +13,9 @@ terraform-provider-readthedocs/
 ├── gpg-pubkey.asc             # Release signing key
 ├── terraform-registry-manifest.json
 ├── go.mod / go.sum
+├── .tool-versions
 ├── Makefile
-├── CLAUDE.md
+├── CLAUDE.md / AGENT.md / AGENTS.md
 ├── README.md / merge-notes.md / TODO.md / LICENSE
-└── docs/                      # PROJ-LAYOUT.md, PROJ-SCHEMA.md, PROJ-ARCH.md
+└── docs/                      # PROJ-LAYOUT, PROJ-SCHEMA, PROJ-ARCH, THREAT-MODEL (+ .summary twins)
 ```
